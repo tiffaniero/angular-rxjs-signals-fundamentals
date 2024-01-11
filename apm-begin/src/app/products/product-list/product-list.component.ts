@@ -1,25 +1,59 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 
-import { NgIf, NgFor, NgClass } from '@angular/common';
+import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
 import { Product } from '../product';
 import { ProductDetailComponent } from '../product-detail/product-detail.component';
+import { ProductService } from '../product.service';
+import { EMPTY, Subscription, catchError, tap } from 'rxjs';
 
 @Component({
     selector: 'pm-product-list',
     templateUrl: './product-list.component.html',
     standalone: true,
-  imports: [NgIf, NgFor, NgClass, ProductDetailComponent]
+  imports: [AsyncPipe, NgIf, NgFor, NgClass, ProductDetailComponent]
 })
-export class ProductListComponent {
-  // Just enough here for the template to compile
+export class ProductListComponent /*implements OnInit, OnDestroy*/{
   pageTitle = 'Products';
   errorMessage = '';
+  //sub!: Subscription;
+
+  private productService = inject(ProductService);
 
   // Products
   products: Product[] = [];
+  
+  products$ = this.productService.product$
+  .pipe(
+    tap(()=> console.log('In component pipeline')),
+    catchError(error => {
+      this.errorMessage = error;
+      return EMPTY;
+    })
+  )
 
   // Selected product id to highlight the entry
   selectedProductId: number = 0;
+
+  /*ngOnInit(): void {
+    this.sub = this.productService.getProducts()
+    .pipe(
+      tap(()=> console.log('In component pipeline')),
+      catchError(error => {
+        this.errorMessage = error;
+        return EMPTY;
+      })
+    )
+    .subscribe({
+      next: products => this.products = products,
+      complete: () => {
+        console.log('End of the list')
+      }
+    });
+  }*/
+
+  /*ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }*/
 
   onSelected(productId: number): void {
     this.selectedProductId = productId;
