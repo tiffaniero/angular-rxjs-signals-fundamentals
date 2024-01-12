@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
-import { Product } from '../product';
+//import { Product } from '../product';
 import { ProductDetailComponent } from '../product-detail/product-detail.component';
 import { ProductService } from '../product.service';
 import { EMPTY, Subscription, catchError, tap } from 'rxjs';
@@ -20,19 +20,20 @@ export class ProductListComponent /*implements OnInit, OnDestroy*/{
   private productService = inject(ProductService);
 
   // Products
-  products: Product[] = [];
+  //products: Product[] = [];
   
-  products$ = this.productService.product$
+  readonly products$ = this.productService.products$
   .pipe(
-    tap(()=> console.log('In component pipeline')),
     catchError(error => {
       this.errorMessage = error;
       return EMPTY;
     })
-  )
+  );
+
 
   // Selected product id to highlight the entry
-  selectedProductId: number = 0;
+  //selectedProductId: number = 0;
+  readonly selectedProductId$ = this.productService.productSelected$;
 
   /*ngOnInit(): void {
     this.sub = this.productService.getProducts()
@@ -56,6 +57,7 @@ export class ProductListComponent /*implements OnInit, OnDestroy*/{
   }*/
 
   onSelected(productId: number): void {
-    this.selectedProductId = productId;
+    //this.selectedProductId = productId;
+    this.productService.productSelected(productId);
   }
 }
