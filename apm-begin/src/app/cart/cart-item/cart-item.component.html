@@ -1,4 +1,4 @@
-<div *ngIf='cartItem'>
+<div *ngIf='cartItemSignal() as cartItem'>
 
   <div class="row mb-2">
     <div class="col-md-4">
@@ -11,7 +11,7 @@
       <select class="form-select"
               aria-label="Quantity list"
               style="margin-bottom: 10px; width:60px; margin: 0 auto"
-              [ngModel]="cartItem.quantity"
+              [ngModel]="cartItemSignal().quantity"
               (ngModelChange)="onQuantitySelected($event)">
         <option disabled
                 value="">--Select a quantity--</option>
@@ -19,7 +19,7 @@
       </select>
     </div>
     <div class="col-md-2 text-center">
-      {{ exPrice | currency }}
+      {{ exPrice() | currency }}
     </div>
     <div class="col-md-2">
       <button class="btn btn-warning"
